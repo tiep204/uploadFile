@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: tiepd
@@ -11,6 +12,8 @@
     <title>Title</title>
 </head>
 <body>
-<img src="/image/${image}" alt="">
+<c:forEach items="${image}" var="img">
+    <img src="/image/${img}" alt="">
+</c:forEach>
 </body>
 </html>

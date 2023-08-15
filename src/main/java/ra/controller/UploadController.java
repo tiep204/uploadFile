@@ -13,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/upload")
@@ -27,21 +30,27 @@ public class UploadController {
     }
 
     @PostMapping("/image")
-    public String handleUpload( Model model,@RequestParam("image") MultipartFile multipartFile) {
-        // tiến hành upload vào thu mục chỉ định
-        File file = new File(uploadPath);
-        if (!file.exists()){
-            //chua ton tai folder , khoi dao mot folder moi
+    public String handleUpload(Model model, @RequestParam("image") List<MultipartFile> images){
+        //tiến hành up load vào thư mục chỉ định
+        File file =new File(uploadPath);
+        if(!file.exists()){
+            // chưa tồn tại folder , khởi tạo 1 folder mới
             file.mkdirs();
         }
-        String fileName = multipartFile.getOriginalFilename();
-        //upload anh
-        try {
-            FileCopyUtils.copy(multipartFile.getBytes(),new File(uploadPath+fileName));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        List<String> listImageUrls = new ArrayList<>();
+        for (MultipartFile multipartFile: images
+        ) {
+            String fileName = multipartFile.getOriginalFilename();
+            listImageUrls.add(fileName);
+            // upload ảnh
+            try {
+                FileCopyUtils.copy(multipartFile.getBytes(),new File(uploadPath+fileName));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        model.addAttribute("image",fileName);
+
+        model.addAttribute("image",listImageUrls);
         return "home";
     }
 }
